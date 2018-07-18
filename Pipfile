@@ -6,8 +6,10 @@ name = "pypi"
 [packages]
 django = "*"
 djangorestframework = "*"
+pygments = "*"
 
 [dev-packages]
+django-extensions = "*"
 
 [requires]
 python_version = "3.7"
