@@ -3,7 +3,7 @@ import random
 
 from django.test import TestCase
 from rest_framework import status
-from rest_framework.parsers import JSONParser
+
 from rest_framework.renderers import JSONRenderer
 from rest_framework.test import APITestCase
 
@@ -47,16 +47,11 @@ class SnippetListTest(APITestCase):
             Snippet.objects.create(code=f'a={i}')
         response = self.client.get('/snippets/django_view/snippets/')
         data = json.loads(response.content)
-        snippets = Snippet.objects.order_by('-created')
-
         # response에 전달된 JSON string을 파싱은 python객체를 순홰ㅣ하며 'pk'값만 꺼냄
-        data_pk_list = []
-        for item in data:
-            data_pk_list.append(item['pk'])
-
         # Snippet.objects.order_by('-created') Queryset 을 순회하며 각 Snippet인스턴스의 pk값만 꺼냄
-        snippets_pk_list = []
-        for item in snippets:
-            snippets_pk_list.append(item.pk)
-
-        self.assertEqual(data_pk_list, snippets_pk_list)
+        self.assertEqual(
+            # JSON으로 전달받은 데이터에서 pk만 꺼낸 리스트
+            [item['pk'] for item in data],
+            # DB에서 created역순으로 pk값만 가져온QuerySet으로 만든 리스트
+            list(Snippet.objects.order_by('-created').values_list('pk', flat=True))
+        )
