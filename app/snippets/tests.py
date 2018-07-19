@@ -55,3 +55,25 @@ class SnippetListTest(APITestCase):
             # DB에서 created역순으로 pk값만 가져온QuerySet으로 만든 리스트
             list(Snippet.objects.order_by('-created').values_list('pk', flat=True))
         )
+
+class SnippetCreateTest(APITestCase):
+    def test_snippet_create_status_code(self):
+        """
+        201이 돌아오는지
+        :return:
+        """
+        pass
+
+    def test_snippet_create_save_db(self):
+        """
+        요청 후 실제 DB에 저장되었는지 (모든 필드값이 정상적으로 저장되는지)
+        :return:
+        """
+        pass
+
+    def test_snippet_create_missnig_code_raise_exception(self):
+        """
+        'code' 데이터가 주어지지 않을경우 적절한 Exception 이 발생하는지
+        :return:
+        """
+        pass
