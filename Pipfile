@@ -7,6 +7,9 @@ name = "pypi"
 django = "*"
 djangorestframework = "*"
 pygments = "*"
+notebook = "*"
+selenium = "*"
+"bs4" = "*"
 
 [dev-packages]
 django-extensions = "*"
