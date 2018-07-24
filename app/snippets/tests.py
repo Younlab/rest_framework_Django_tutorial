@@ -11,12 +11,13 @@ from snippets.models import Snippet
 
 
 class SnippetListTest(APITestCase):
+    url = '/generic/snippets/'
     def test_status_code(self):
         """
         요청 결과의 HTTP상태코드가 200인지 확인
         :return:
         """
-        response = self.client.get('/snippets/django_view/snippets/')
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -29,7 +30,7 @@ class SnippetListTest(APITestCase):
         """
         for i in range(random.randint(10, 100)):
             Snippet.objects.create(code=f'a={i}')
-        response = self.client.get('/snippets/django_view/snippets/')
+        response = self.client.get(self.url)
         orm = Snippet.objects.all()
         data = json.loads(response.content)
         # response 로 받은 json데이터의 길이와
@@ -45,7 +46,7 @@ class SnippetListTest(APITestCase):
         """
         for i in range(random.randint(10, 100)):
             Snippet.objects.create(code=f'a={i}')
-        response = self.client.get('/snippets/django_view/snippets/')
+        response = self.client.get(self.url)
         data = json.loads(response.content)
         # response에 전달된 JSON string을 파싱은 python객체를 순홰ㅣ하며 'pk'값만 꺼냄
         # Snippet.objects.order_by('-created') Queryset 을 순회하며 각 Snippet인스턴스의 pk값만 꺼냄
@@ -71,7 +72,7 @@ class SnippetCreateTest(APITestCase):
         # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         response = self.client.post(
-            '/snippets/django_view/snippets/',
+            self.url,
             data={
                 'code':"print('hello, world')",
             },
