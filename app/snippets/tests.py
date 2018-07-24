@@ -56,24 +56,84 @@ class SnippetListTest(APITestCase):
             list(Snippet.objects.order_by('-created').values_list('pk', flat=True))
         )
 
+CREATE_DATA = '''{
+"code":"print('hello, world')"
+}'''
+
 class SnippetCreateTest(APITestCase):
     def test_snippet_create_status_code(self):
         """
         201이 돌아오는지
         :return:
         """
-        pass
+        # 실제 JSON 형식 데이터 전송
+        # response = self.client.post('/snippets/django_view/snippets/', data=CREATE_DATA, content_type='application/json',)
+        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(
+            '/snippets/django_view/snippets/',
+            data={
+                'code':"print('hello, world')",
+            },
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_snippet_create_save_db(self):
         """
         요청 후 실제 DB에 저장되었는지 (모든 필드값이 정상적으로 저장되는지)
         :return:
         """
-        pass
+        # 생성할 Snippet에 사용될 정보
+        snippet_data = {
+            'title': 'SnippetTitle',
+            'code': 'SnippetCode',
+            'linenos': True,
+            'language': 'c',
+            'style':'monokai',
+        }
+        response = self.client.post(
+            '/snippets/django_view/snippets/',
+            data=snippet_data,
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = json.loads(response.content)
+
+        # snippet_detail 내의 키들을 동적으로 순회하면서 아래 코드를 실행
+        # (for 문으로 변경하기)
+        # self.assertEqual(data['title'], snippet_data['title'])
+        # self.assertEqual(data['code'], snippet_data['code'])
+        # self.assertEqual(data['linenos'], snippet_data['linenos'])
+        # self.assertEqual(data['language'], snippet_data['language'])
+        # self.assertEqual(data['style'], snippet_data['style'])
+
+        # data_list = ['title', 'code', 'linenos', 'language', 'style']
+
+
+        # response 로 반은 데이터와 Snippet생성시 사용한 데이터가 같은지 확인
+        for i in snippet_data.keys():
+            self.assertEqual(data[i], snippet_data[i])
+
+
 
     def test_snippet_create_missnig_code_raise_exception(self):
         """
         'code' 데이터가 주어지지 않을경우 적절한 Exception 이 발생하는지
         :return:
         """
-        pass
+        snippet_data = {
+            'title': 'SnippetTitle',
+            'code': 'SnippetCode',
+            'linenos': True,
+            'language': 'c',
+            'style': 'monokai',
+        }
+        response = self.client.post(
+            '/snippets/django_view/snippets/',
+            data=snippet_data,
+            format='json',
+        )
+        # code 가 주어지지않으면 HTTP 상태코드가 400이어야 한다.
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
